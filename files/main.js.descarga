@@ -1,0 +1,269 @@
+var scene, audioPlayer, audioPlaying;
+
+$(document).ready(function(){
+  var lowRes = false;
+  var contactsAnimated = false;
+
+  if (isMobile){
+    $('.tooltip').addClass('mobile');
+    $('.layer').remove();
+    $('.page-background').addClass('mobile');
+  }
+
+
+  if (window.outerWidth < 1024) {
+    lowRes = true;
+    $('.loading-wrapper').show();
+    $('.loading-bar-container').hide();
+    $('.loading-text').show();
+  }
+
+  $(window).resize(function(){
+    if (window.outerWidth < 1024 && !lowRes){
+      window.location.reload();
+      lowRes = true;
+    } else if (window.outerWidth > 1024 && lowRes) {
+      window.location.reload();
+      lowRes = false;
+    }
+  });
+
+  if (lowRes)
+    return;
+
+  audioPlayer = new Howl({
+    urls: ['media/ambient.mp3'],
+    volume: 0.3,
+    autoplay: false,
+    loop: true
+  });
+
+  $('#main').waitForImages(function() {
+    $('.loading-wrapper').fadeOut(1000);
+    startScene();
+  }, function(loaded, total, success) {
+    bar = Math.round(100 - (100 * loaded) / total);
+    $('.loading-bar').css('right',bar);
+  }, true);
+
+  $('.content-section-close').hammer().on('tap', function(e){
+    e.preventDefault();
+    $(this).parents('.content-active').removeClass('content-active');
+    $('.menu-active').removeClass('menu-active');
+    $('body').removeClass('menu-open');
+    //$('.animate').removeClass('animate');
+    if(!isMobile) {
+      scene.parallax('enable');
+    }
+  });
+
+  $(".content-arrow-right").hammer().on('tap',function(e){
+    e.preventDefault();
+    slider = eval($(this).data('slider'));
+    slider.next();
+  });
+
+  $(".content-arrow-left").hammer().on('tap',function(e){
+    e.preventDefault();
+    slider = eval($(this).data('slider'));
+    slider.prev();
+  });
+
+  $('.menu-item').hammer().on('tap', function(e){
+    e.preventDefault();
+    btn = $(this);
+
+    if (btn.hasClass('menu-active'))
+      return;
+
+    // Add class to boy
+    $('body').addClass('menu-open');
+
+    // Get previous content
+    prevContent = $('.content-active');
+    prevBtn = $('.menu-active');
+
+    $('.content-top').removeClass('content-top');
+
+    // Open target menu
+    target = "." + btn.data('target');
+    $(target).addClass('content-active content-top');
+    $(target).find('.active-slide').addClass('animate');
+    btn.addClass('menu-active');
+    prevBtn.removeClass('menu-active');
+
+    if (btn.data('target') == "content-contacts" && !contactsAnimated){
+      var stage = new swiffy.Stage(document.getElementById('swiffycontainer'),
+                                                   swiffyobject);
+
+      stage.start();
+      contactsAnimated = true;
+    }
+
+    setTimeout(function(){
+      prevContent.removeClass('content-active');
+      //prevContent.find('.animate').removeClass('animate');
+    },500);
+
+    if(!isMobile) {
+      scene.parallax('disable');
+    }
+  });
+
+  $('.toggle-sound').hammer().on('tap', function(e){
+    e.preventDefault();
+
+    if (audioPlaying) {
+      audioPlayer.pause();
+      audioPlaying = false;
+      $('.toggle-sound > img').attr('src', 'img/menu/icon_som_off.png');
+    } else {
+      audioPlayer.play();
+      audioPlaying = true;
+      $('.toggle-sound > img').attr('src', 'img/menu/icon_som_on.png');
+    }
+  });
+
+  $('.contacts-next').hammer().on('tap', function(){
+    contactsSlider.next();
+  });
+
+  $('.contacts-prev').hammer().on('tap', function(){
+    contactsSlider.prev();
+  });
+
+  $('.tooltip-wrapper, .tooltip').hammer().on('tap', function(){
+    $('.tooltip-wrapper').fadeOut(500);
+  });
+
+
+  validator = $('#contact').html5form({
+    colorOn: '#d91c11',
+    colorOff: '#d91c11',
+    responseDiv: '#response',
+    messages: 'pt',
+    allBrowsers: true
+  });
+
+
+
+});
+
+function generatePoints(goLeft) {
+  var minX = 200;
+  var minY = 200;
+  var maxX = $(document).width() - 300;
+  var maxY = $(document).height() - 300;
+
+  var numPoints = 5;
+  var i;
+
+  var points = [];
+
+    points.push([-300,maxY/2]);
+
+
+  for (i=0; i<numPoints; i++) {
+    points.push([Math.floor(Math.random()*(maxX-minX))+minX, Math.floor(Math.random()*(maxY-minY))+minY]);
+  }
+
+
+    points.push([maxX + 600, maxY/2]);
+
+
+
+
+  return points;
+}
+
+window.naturaSlider = Swipe(document.getElementById('natura-slider'), {
+  speed: 1000,
+  transitionEnd: function(index, elem) {
+    //$('.animate').removeClass('animate');
+    $(elem).addClass('animate');
+    $(elem).siblings('.active-slide').removeClass('active-slide');
+    $(elem).addClass('active-slide');
+  }
+});
+
+window.organicSlider = Swipe(document.getElementById('organic-slider'), {
+  speed: 1000,
+  transitionEnd: function(index, elem) {
+    //$('.animate').removeClass('animate');
+    $(elem).addClass('animate');
+    $(elem).siblings('.active-slide').removeClass('active-slide');
+    $(elem).addClass('active-slide');
+  }
+});
+
+window.gourmetSlider = Swipe(document.getElementById('gourmet-slider'), {
+  speed: 1000,
+  transitionEnd: function(index, elem) {
+    //$('.animate').removeClass('animate');
+    $(elem).addClass('animate');
+    $(elem).siblings('.active-slide').removeClass('active-slide');
+    $(elem).addClass('active-slide');
+  }
+});
+
+window.contactsSlider = Swipe(document.getElementById('contacts-slider'), {
+  speed: 1000,
+  continuous: false,
+  transitionEnd: function(index, elem) {
+    //$('.animate').removeClass('animate');
+    $(elem).addClass('animate');
+    $(elem).siblings('.active-slide').removeClass('active-slide');
+    $(elem).addClass('active-slide');
+  }
+});
+
+
+function checkOrientation() {
+  if (window.orientation == 90 || window.orientation == -90) {
+    setTimeout(function(){
+      $('#landscape').show();
+    }, 1000);
+
+  }
+  else {
+    $('#landscape').hide();
+  }
+}
+
+function startScene() {
+  setTimeout(function(){
+    $('.tooltip').addClass('animate');
+  },1500);
+
+  if(!isMobile) {
+    scene = $('.page-background').parallax({
+      calibrateX: true,
+      calibrateY: true,
+      scalarX: 35,
+      scalarY: 10,
+      limitX: false,
+      limitY: false
+    });
+
+    audioPlayer.play();
+    audioPlaying = true;
+    var spline;
+
+    setInterval(function(){
+      if (!$('body').hasClass('menu-open')) {
+        var points = generatePoints(false);
+        spline = $.crSpline.buildSequence(points);
+
+        $("#bee").animate({ crSpline: spline }, 10000);
+      }
+    },35000);
+
+    setInterval(function(){
+      if (!$('body').hasClass('menu-open')) {
+        var points = generatePoints(true);
+        spline = $.crSpline.buildSequence(points);
+        $("#ladybug").animate({ crSpline: spline }, 10000);
+      }
+    },15000);
+  }
+}
