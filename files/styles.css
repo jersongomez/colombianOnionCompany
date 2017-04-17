@@ -4719,3 +4719,7 @@ a {
     border-radius: 800px;
     overflow: hidden;
 }
+
+.compo-active {
+    right: 35% !important;
+}
