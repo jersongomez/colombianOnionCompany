@@ -176,6 +176,16 @@ function generatePoints(goLeft) {
   return points;
 }
 
+window.naturaSlider = Swipe(document.getElementById('home-slider'), {
+  speed: 1000,
+  transitionEnd: function(index, elem) {
+    //$('.animate').removeClass('animate');
+    $(elem).addClass('animate');
+    $(elem).siblings('.active-slide').removeClass('active-slide');
+    $(elem).addClass('active-slide');
+  }
+});
+
 window.naturaSlider = Swipe(document.getElementById('natura-slider'), {
   speed: 1000,
   transitionEnd: function(index, elem) {
