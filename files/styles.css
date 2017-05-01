@@ -3600,6 +3600,16 @@ a {
 .menu-natura.menu-active {
   background: #bfd42f;
 }
+
+.menu-home {
+  background: #613aff;
+}
+.menu-home:hover,
+.menu-home.menu-active {
+  background: #4720f7;
+}
+
+
 .menu-organic {
   background: #fbd54e;
 }
@@ -3965,6 +3975,12 @@ a {
 }
 .content-top {
   z-index: 40;
+}
+
+.content-home {
+  background: #4720f7;
+  color: #fff;
+  border-color: #4720f7;
 }
 .content-natura {
   background: #bfd42f;
@@ -4760,4 +4776,13 @@ a {
 
 .logobottom {
     display: inline-block;
+}
+
+
+.slogan {
+  width: 300px !important;
+  height: 250px !important;
+  border-radius: 15px !important;
+  left: 15% !important;
+  top: 47% !important;
 }
